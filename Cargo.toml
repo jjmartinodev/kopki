@@ -8,7 +8,7 @@ authors = ["sugmaboy<jjmartinodev@outlook.com>"]
 readme = "README.md"
 license-file = "LICENSE"
 description = "a simple graphical engine in wgpu and winit"
-repository = "https://github.com/jjmartinodev/anylist"
+repository = "https://github.com/jjmartinodev/kopki"
 keywords = ["graphics","gfx"]
 categories = ["graphics", "rendering"]
 
