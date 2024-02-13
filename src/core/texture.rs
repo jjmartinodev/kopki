@@ -12,6 +12,10 @@ pub struct Texture2D {
 }
 
 impl Sampler2D {
+    pub fn from_descriptor(ctx: &Context, descriptor: &wgpu::SamplerDescriptor) -> Sampler2D {
+        let sampler = ctx.device.create_sampler(descriptor);
+        Sampler2D { sampler }
+    }
     pub fn default(ctx: &Context) -> Sampler2D {
         let sampler = ctx.device.create_sampler(&wgpu::SamplerDescriptor
             {
