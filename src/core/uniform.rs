@@ -1,6 +1,5 @@
 use wgpu::util::{BufferInitDescriptor, DeviceExt};
-
-use crate::Context;
+use super::context::Context;
 
 pub struct UniformBuffer {
     buffer: wgpu::Buffer

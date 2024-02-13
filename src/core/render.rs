@@ -1,7 +1,7 @@
 
 use std::ops::Range;
 
-use crate::{group::GroupLayout, Context, WindowSurface};
+use super::{context::{Context, WindowSurface}, group::GroupLayout};
 
 pub struct Pipeline {
     pipeline: wgpu::RenderPipeline

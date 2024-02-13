@@ -2,7 +2,17 @@ use std::mem;
 
 use bytemuck::{Pod, Zeroable};
 use kopki::{
-    bytemuck, mesh::StaticMesh, render::{Pipeline, RenderCommand}, wgpu, winit, Context
+    bytemuck,
+    core::{
+        context::Context,
+        mesh::StaticMesh,
+        render::{
+            Pipeline,
+            RenderCommand
+        }
+    },
+    wgpu,
+    winit
 };
 use winit::{
     event::{Event, WindowEvent},

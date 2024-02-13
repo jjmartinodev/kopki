@@ -3,13 +3,21 @@ use std::mem;
 use bytemuck::{cast_slice, Pod, Zeroable};
 use kopki::{
     bytemuck,
-    group::{Group, GroupLayout},
-    mesh::StaticMesh,
-    render::{Pipeline, RenderCommand},
-    uniform::UniformBuffer,
+    core::{
+        context::Context,
+        group::{
+            Group,
+            GroupLayout
+        },
+        mesh::StaticMesh,
+        render::{
+            Pipeline,
+            RenderCommand
+        },
+        uniform::UniformBuffer
+    },
     wgpu,
-    winit,
-    Context
+    winit
 };
 use winit::{
     event::{Event, WindowEvent},

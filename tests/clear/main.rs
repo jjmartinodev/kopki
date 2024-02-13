@@ -1,5 +1,5 @@
 use kopki::{
-    wgpu, winit, Context
+    wgpu, winit, core::context::Context
 };
 use winit::{
     event::{Event, WindowEvent},

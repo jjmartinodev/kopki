@@ -1,6 +1,6 @@
 [package]
 name = "kopki"
-version = "0.1.2"
+version = "0.2.2"
 edition = "2021"
 
 rust-version = "1.56"
@@ -12,10 +12,9 @@ repository = "https://github.com/jjmartinodev/kopki"
 keywords = ["graphics","gfx"]
 categories = ["graphics", "rendering"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 bytemuck = { version = "1.14.3", features = ["derive"] }
+glam = "0.25.0"
 pollster = "0.3.0"
 wgpu = "0.19.1"
 winit = "0.29.10"

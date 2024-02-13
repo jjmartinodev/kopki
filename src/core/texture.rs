@@ -1,7 +1,6 @@
 use wgpu::util::{DeviceExt, TextureDataOrder};
 
-use crate::Context;
-
+use super::context::Context;
 pub struct Sampler2D {
     sampler: wgpu::Sampler
 }

@@ -1,9 +1,27 @@
 use std::mem;
 
-use bytemuck::{Pod, Zeroable};
 use kopki::{
-    bytemuck, group::{Group, GroupLayout}, mesh::StaticMesh, render::{Pipeline, RenderCommand}, texture::{Sampler2D, Texture2D}, wgpu, winit, Context
+    bytemuck,
+    core::{
+        context::Context,
+        group::{
+            Group,
+            GroupLayout
+        },
+        mesh::StaticMesh,
+        render::{
+            Pipeline,
+            RenderCommand
+        },
+        texture::{
+            Sampler2D,
+            Texture2D
+        }
+    },
+    wgpu,
+    winit
 };
+use bytemuck::{Pod, Zeroable};
 use winit::{
     event::{Event, WindowEvent},
     event_loop::EventLoop,
