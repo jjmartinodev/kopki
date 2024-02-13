@@ -7,6 +7,7 @@ use winit::dpi::PhysicalSize;
 pub mod render;
 pub mod mesh;
 pub mod texture;
+pub mod group;
 
 /// Represents a graphical context to access the gpu through backends.
 pub struct Context {

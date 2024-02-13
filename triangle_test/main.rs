@@ -41,7 +41,8 @@ fn main() {
         wgpu::include_wgsl!("shader.wgsl"),
         &ctx,
         &surface,
-        &[VERTEX_LAYOUT]
+        &[VERTEX_LAYOUT],
+        &[]
     );
     let mesh = StaticMesh::new(&ctx, &VERTICES, &INDICES);
 

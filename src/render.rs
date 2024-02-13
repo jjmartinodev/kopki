@@ -18,6 +18,7 @@ pub enum RenderResource<'a> {
     Pipeline { pipeline: &'a wgpu::RenderPipeline },
     VertexBuffer { slice: wgpu::BufferSlice<'a> },
     IndexBuffer { slice: wgpu::BufferSlice<'a> },
+    BindGroup { group: &'a wgpu::BindGroup }
 }
 
 impl Pipeline {
@@ -25,14 +26,15 @@ impl Pipeline {
         shader_source: wgpu::ShaderModuleDescriptor<'_>,
         ctx: &Context,
         surface: &WindowSurface<'_>,
-        vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>]
+        vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>],
+        bind_group_layouts: &[&wgpu::BindGroupLayout]
     ) -> Pipeline {
         let shader = ctx.device.create_shader_module(shader_source);
 
         let pipeline_layout = ctx.device.create_pipeline_layout(
             &wgpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[],
+                bind_group_layouts: bind_group_layouts,
                 push_constant_ranges: &[]
             }
         );
