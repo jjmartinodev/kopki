@@ -8,6 +8,7 @@ pub struct Pipeline {
 
 pub enum RenderCommand {
     SetPipeline { resource_index: usize },
+    SetBindGroup { index: u32, resource_index: usize },
     SetVertexBuffer { slot: u32, resource_index: usize },
     SetIndexBuffer { resource_index: usize, index_format: wgpu::IndexFormat },
     DrawIndexed { indices: Range<u32>, base_vertex: i32, instances: Range<u32> },

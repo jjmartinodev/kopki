@@ -175,6 +175,18 @@ impl Context {
                     } => {
                         render_pass.draw(vertices.clone(), instances.clone())
                     }
+                    RenderCommand::SetBindGroup { index, resource_index } => {
+                        match render_resources[*resource_index] {
+                            RenderResource::BindGroup { group } => {
+                                render_pass.set_bind_group(
+                                    *index,
+                                    group,
+                                    &[]
+                                )
+                            }
+                            _ => panic!()
+                        }
+                    }
                 }
             }
         }
