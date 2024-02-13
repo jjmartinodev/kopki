@@ -10,7 +10,8 @@ pub enum RenderCommand {
     SetPipeline { resource_index: usize },
     SetVertexBuffer { slot: u32, resource_index: usize },
     SetIndexBuffer { resource_index: usize, index_format: wgpu::IndexFormat },
-    DrawIndexed { indices: Range<u32>, base_vertex: i32, instances: Range<u32> }
+    DrawIndexed { indices: Range<u32>, base_vertex: i32, instances: Range<u32> },
+    Draw { vertices: Range<u32>, instances: Range<u32> }
 }
 
 pub enum RenderResource<'a> {
@@ -21,17 +22,12 @@ pub enum RenderResource<'a> {
 
 impl Pipeline {
     pub fn new(
-        shader_source: wgpu::ShaderSource<'_>,
+        shader_source: wgpu::ShaderModuleDescriptor<'_>,
         ctx: &Context,
         surface: &WindowSurface<'_>,
         vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>]
     ) -> Pipeline {
-        let shader = ctx.device.create_shader_module(
-            wgpu::ShaderModuleDescriptor {
-                label: Some("Render Pipeline Shader Module"),
-                source: shader_source
-            }
-        );
+        let shader = ctx.device.create_shader_module(shader_source);
 
         let pipeline_layout = ctx.device.create_pipeline_layout(
             &wgpu::PipelineLayoutDescriptor {
@@ -84,5 +80,8 @@ impl Pipeline {
         Pipeline {
             pipeline
         }
+    }
+    pub fn as_resource(&self) -> RenderResource<'_> {
+        RenderResource::Pipeline { pipeline: &self.pipeline }
     }
 }

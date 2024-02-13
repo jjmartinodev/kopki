@@ -3,10 +3,6 @@ use wgpu::util::{BufferInitDescriptor, DeviceExt};
 
 use crate::{render::RenderResource, Context};
 
-pub trait Vertex: Pod + Zeroable {
-    fn desc() -> wgpu::VertexBufferLayout<'static>;
-}
-
 pub struct StaticMesh {
     vertex_buffer: wgpu::Buffer,
     index_buffer: wgpu::Buffer,
@@ -14,7 +10,7 @@ pub struct StaticMesh {
 }
 
 impl StaticMesh {
-    pub fn new<V:Vertex>(
+    pub fn new<V: Pod + Zeroable>(
         ctx: &Context,
         vertices: &[V],
         indices: &[u32]

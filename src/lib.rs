@@ -158,19 +158,24 @@ impl Context {
                         index_format 
                     } => {
                         match render_resources[*resource_index] {
-                            RenderResource::VertexBuffer { slice } => {
+                            RenderResource::IndexBuffer { slice } => {
                                 render_pass.set_index_buffer(slice, *index_format)
                             }
                             _ => panic!()
                         }
                     }
-                    
                     RenderCommand::DrawIndexed {
                         indices,
                         base_vertex,
                         instances
                     } => {
                         render_pass.draw_indexed(indices.clone(),* base_vertex, instances.clone())
+                    }
+                    RenderCommand::Draw {
+                        vertices,
+                        instances
+                    } => {
+                        render_pass.draw(vertices.clone(), instances.clone())
                     }
                 }
             }
