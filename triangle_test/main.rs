@@ -69,7 +69,13 @@ fn main() {
                                 pipeline.as_resource(),
                                 mesh.vertex_buffer_resource(),
                                 mesh.index_buffer_resource()
-                            ]
+                            ],
+                            wgpu::Color {
+                                r: 0.0,
+                                g: 0.0,
+                                b: 0.0,
+                                a: 0.0,
+                            }
                         )
                     }
                     WindowEvent::Resized(size) => {

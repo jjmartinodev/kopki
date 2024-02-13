@@ -12,6 +12,11 @@ wgpu = "0.19.1"
 winit = "0.29.10"
 
 [[test]]
-name = "test"
-path = "test/main.rs"
+name = "triangle_test"
+path = "triangle_test/main.rs"
+harness = false
+
+[[test]]
+name = "clear_test"
+path = "clear_test/main.rs"
 harness = false

@@ -6,6 +6,7 @@ use winit::dpi::PhysicalSize;
 
 pub mod render;
 pub mod mesh;
+pub mod texture;
 
 /// Represents a graphical context to access the gpu through backends.
 pub struct Context {
@@ -101,7 +102,8 @@ impl Context {
         &self,
         surface: &WindowSurface,
         render_commands: &[RenderCommand],
-        render_resources: &[RenderResource]
+        render_resources: &[RenderResource],
+        color: wgpu::Color
     ) {
         let output = surface.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor {
@@ -121,12 +123,7 @@ impl Context {
                     view: &view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.2,
-                            b: 0.3,
-                            a: 1.0,
-                        }),
+                        load: wgpu::LoadOp::Clear(color),
                         store: wgpu::StoreOp::Store,
                     },
                 })],
