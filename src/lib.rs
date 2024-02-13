@@ -1,6 +1,11 @@
+use render::{RenderCommand, RenderResource};
 pub use wgpu;
 pub use winit;
+pub use bytemuck;
 use winit::dpi::PhysicalSize;
+
+pub mod render;
+pub mod mesh;
 
 /// Represents a graphical context to access the gpu through backends.
 pub struct Context {
@@ -21,17 +26,6 @@ pub struct WindowSurface<'a> {
     configuration: wgpu::SurfaceConfiguration,
     capabilities: wgpu::SurfaceCapabilities,
     format: wgpu::TextureFormat
-}
-
-/// A pipeline that intakes ```PipelineResource```s, to draw a
-/// scene to a ```WindowSurface``` with a ```Context```.
-pub struct Pipeline {
-    pipeline: wgpu::RenderPipeline
-}
-
-pub enum PipelineResource<'a> {
-    VertexBuffer(wgpu::BufferSlice<'a>),
-    IndexBuffer(wgpu::BufferSlice<'a>),
 }
 
 impl Context {
@@ -103,10 +97,11 @@ impl Context {
             format
         }
     }
-    pub fn render(
+    pub fn render<'a>(
         &self,
         surface: &WindowSurface,
-        pipelines: &[Pipeline]
+        render_commands: &[RenderCommand],
+        render_resources: &[RenderResource]
     ) {
         let output = surface.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor {
@@ -140,8 +135,44 @@ impl Context {
                 timestamp_writes: None,
             });
 
-            for pipeline in pipelines {
-                render_pass.set_pipeline(&pipeline.pipeline)
+            for command in render_commands {
+                match command {
+                    RenderCommand::SetPipeline { resource_index } => {
+                        match render_resources[*resource_index] {
+                            RenderResource::Pipeline { pipeline } => {
+                                render_pass.set_pipeline(pipeline)
+                            }
+                            _ => panic!()
+                        }
+                    }
+                    RenderCommand::SetVertexBuffer { slot, resource_index } => {
+                        match render_resources[*resource_index] {
+                            RenderResource::VertexBuffer { slice } => {
+                                render_pass.set_vertex_buffer(*slot, slice)
+                            }
+                            _ => panic!()
+                        }
+                    }
+                    RenderCommand::SetIndexBuffer {
+                        resource_index,
+                        index_format 
+                    } => {
+                        match render_resources[*resource_index] {
+                            RenderResource::VertexBuffer { slice } => {
+                                render_pass.set_index_buffer(slice, *index_format)
+                            }
+                            _ => panic!()
+                        }
+                    }
+                    
+                    RenderCommand::DrawIndexed {
+                        indices,
+                        base_vertex,
+                        instances
+                    } => {
+                        render_pass.draw_indexed(indices.clone(),* base_vertex, instances.clone())
+                    }
+                }
             }
         }
     
@@ -157,73 +188,6 @@ impl<'a> WindowSurface<'a> {
             self.configuration.width = size.width;
             self.configuration.height = size.height;
             self.surface.configure(&ctx.device, &self.configuration);
-        }
-    }
-}
-
-impl Pipeline {
-    pub fn new(
-        shader_source: wgpu::ShaderSource<'_>,
-        ctx: &Context,
-        surface: &WindowSurface<'_>
-    ) -> Pipeline {
-        let shader = ctx.device.create_shader_module(
-            wgpu::ShaderModuleDescriptor {
-                label: Some("Render Pipeline Shader Module"),
-                source: shader_source
-            }
-        );
-
-        let pipeline_layout = ctx.device.create_pipeline_layout(
-            &wgpu::PipelineLayoutDescriptor {
-                label: None,
-                bind_group_layouts: &[],
-                push_constant_ranges: &[]
-            }
-        );
-
-        let pipeline = ctx.device.create_render_pipeline(
-            &wgpu::RenderPipelineDescriptor {
-                label: Some("Render Pipeline"),
-                layout: Some(&pipeline_layout),
-                vertex: wgpu::VertexState {
-                    module: &shader,
-                    entry_point: "vs_main",
-                    buffers: &[],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &shader,
-                    entry_point: "fs_main",
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format: surface.configuration.format,
-                        blend: Some(wgpu::BlendState::REPLACE),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::TriangleList,
-                    strip_index_format: None,
-                    front_face: wgpu::FrontFace::Ccw,
-                    cull_mode: Some(wgpu::Face::Back),
-                    // Setting this to anything other than Fill requires Features::NON_FILL_POLYGON_MODE
-                    polygon_mode: wgpu::PolygonMode::Fill,
-                    // Requires Features::DEPTH_CLIP_CONTROL
-                    unclipped_depth: false,
-                    // Requires Features::CONSERVATIVE_RASTERIZATION
-                    conservative: false,
-                },
-                depth_stencil: None,
-                multisample: wgpu::MultisampleState {
-                    count: 1,
-                    mask: !0,
-                    alpha_to_coverage_enabled: false,
-                },
-                multiview: None,
-            }
-        );
-
-        Pipeline {
-            pipeline
         }
     }
 }
