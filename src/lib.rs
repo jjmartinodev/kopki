@@ -8,6 +8,7 @@ pub mod render;
 pub mod mesh;
 pub mod texture;
 pub mod group;
+pub mod uniform;
 
 /// Represents a graphical context to access the gpu through backends.
 pub struct Context {
@@ -65,7 +66,7 @@ impl Context {
         }
     }
     /// create a window surface with a context
-    pub fn create_surface<'a>(&self, window:&'a winit::window::Window) -> WindowSurface<'a> {
+    pub fn create_surface<'a>(&self, window:&winit::window::Window) -> WindowSurface<'a> {
         let size = window.inner_size();
 
         let surface = unsafe {

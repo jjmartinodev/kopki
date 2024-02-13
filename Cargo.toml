@@ -34,3 +34,8 @@ harness = false
 name = "texture"
 path = "tests/texture/main.rs"
 harness = false
+
+[[test]]
+name = "uniform"
+path = "tests/uniform/main.rs"
+harness = false
