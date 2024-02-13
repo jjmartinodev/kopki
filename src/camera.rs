@@ -3,6 +3,14 @@ use glam::{Mat4, Vec3};
 
 use crate::core::{context::Context, uniform::UniformBuffer};
 
+#[rustfmt::skip]
+const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4::from_cols_array(&[
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.5,
+    0.0, 0.0, 0.0, 1.0,
+]);
+
 pub enum Projection {
     Orthographic {
         left: f32,
@@ -60,7 +68,7 @@ impl Camera {
 
         let v = Mat4::look_at_rh(self.position, self.target, self.up);
 
-        p * v
+        OPENGL_TO_WGPU_MATRIX * p * v
     }
     pub fn uptade(&mut self, ctx: &Context) {
         let data = self.calculate_projection().to_cols_array();
@@ -68,5 +76,8 @@ impl Camera {
     }
     pub fn as_resource(&self) -> wgpu::BindingResource {
         self.buffer.as_resource()
+    }
+    pub fn binding_type() -> wgpu::BindingType {
+        UniformBuffer::binding_type()
     }
 }

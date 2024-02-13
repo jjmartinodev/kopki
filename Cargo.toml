@@ -38,3 +38,8 @@ harness = false
 name = "uniform"
 path = "tests/uniform/main.rs"
 harness = false
+
+[[test]]
+name = "camera"
+path = "tests/camera/main.rs"
+harness = false
