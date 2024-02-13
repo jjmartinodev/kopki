@@ -22,7 +22,7 @@
         _ = event_loop.run(move |event,elwt| {
             match event {
                 Event::AboutToWait => {
-
+                    window.request_redraw();
                 }
                 Event::WindowEvent { event, .. } => {
                     match event {

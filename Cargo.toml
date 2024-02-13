@@ -21,16 +21,16 @@ wgpu = "0.19.1"
 winit = "0.29.10"
 
 [[test]]
-name = "triangle_test"
-path = "triangle_test/main.rs"
+name = "triangle"
+path = "tests/triangle/main.rs"
 harness = false
 
 [[test]]
-name = "clear_test"
-path = "clear_test/main.rs"
+name = "clear"
+path = "tests/clear/main.rs"
 harness = false
 
 [[test]]
-name = "texture_test"
-path = "texture_test/main.rs"
+name = "texture"
+path = "tests/texture/main.rs"
 harness = false
