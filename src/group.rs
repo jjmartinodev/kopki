@@ -1,7 +1,7 @@
-use crate::Context;
+use crate::{render::RenderResource, Context};
 
 pub struct GroupLayout {
-    layout: wgpu::BindGroupLayout
+    pub(crate)layout: wgpu::BindGroupLayout
 }
 
 pub struct Group {
@@ -25,7 +25,7 @@ impl GroupLayout {
 impl Group {
     pub fn new(
         ctx: &Context,
-        layout: GroupLayout,
+        layout: &GroupLayout,
         resources: Vec<wgpu::BindingResource<'_>>
     ) -> Group {
 
@@ -47,5 +47,8 @@ impl Group {
         });
         
         Group { group }
+    }
+    pub fn as_resource(&self) -> RenderResource<'_> {
+        RenderResource::BindGroup { group: &self.group }
     }
 }

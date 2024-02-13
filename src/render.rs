@@ -1,6 +1,7 @@
+
 use std::ops::Range;
 
-use crate::{Context, WindowSurface};
+use crate::{group::GroupLayout, Context, WindowSurface};
 
 pub struct Pipeline {
     pipeline: wgpu::RenderPipeline
@@ -28,14 +29,15 @@ impl Pipeline {
         ctx: &Context,
         surface: &WindowSurface<'_>,
         vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>],
-        bind_group_layouts: &[&wgpu::BindGroupLayout]
+        bind_group_layouts: &[&GroupLayout]
     ) -> Pipeline {
         let shader = ctx.device.create_shader_module(shader_source);
 
         let pipeline_layout = ctx.device.create_pipeline_layout(
             &wgpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: bind_group_layouts,
+                bind_group_layouts: bind_group_layouts.iter().map(|e| return &e.layout)
+                .collect::<Vec<_>>().as_slice(),
                 push_constant_ranges: &[]
             }
         );

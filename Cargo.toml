@@ -20,3 +20,8 @@ harness = false
 name = "clear_test"
 path = "clear_test/main.rs"
 harness = false
+
+[[test]]
+name = "texture_test"
+path = "texture_test/main.rs"
+harness = false
