@@ -63,7 +63,6 @@ fn main() {
         &[VERTEX_LAYOUT],
         &[&group_layout]
     );
-    let size = window.inner_size();
     let mut camera = Camera::new(
         &ctx,
         Vec3::new(1.,1.,2.),
