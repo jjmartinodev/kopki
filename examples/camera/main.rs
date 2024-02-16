@@ -3,7 +3,7 @@ use std::mem;
 use bytemuck::{Pod, Zeroable};
 use glam::Vec3;
 use kopki::{
-    bytemuck, camera::{Camera, Projection}, core::{
+    bytemuck, overhaul::camera::{Camera, Projection}, core::{
         context::Context,
         group::{
             Group,
@@ -78,7 +78,7 @@ fn main() {
         }
     );
     let group = Group::new(&ctx, &group_layout, vec![
-        camera.as_resource()
+        camera.as_binding_resource()
     ]);
     let mesh = StaticMesh::new(&ctx, &VERTICES, &INDICES);
 

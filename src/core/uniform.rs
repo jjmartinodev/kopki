@@ -19,7 +19,7 @@ impl UniformBuffer {
     pub fn uptade(&mut self, ctx: &Context, data: &[u8], offset: u64) {
         ctx.queue.write_buffer(&self.buffer, offset, data)
     }
-    pub fn as_resource(&self) -> wgpu::BindingResource {
+    pub fn as_binding_resource(&self) -> wgpu::BindingResource {
         self.buffer.as_entire_binding()
     }
     pub fn binding_type() -> wgpu::BindingType {

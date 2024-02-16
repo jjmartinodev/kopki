@@ -69,7 +69,7 @@ fn main() {
     let mut uniform_data = [1.0f32,0.0f32,0.5f32];
     let mut uniform = UniformBuffer::new(&ctx, cast_slice(&uniform_data));
     let group = Group::new(&ctx, &group_layout, vec![
-        uniform.as_resource()
+        uniform.as_binding_resource()
     ]);
     let mesh = StaticMesh::new(&ctx, &VERTICES, &INDICES);
 
