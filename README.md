@@ -60,3 +60,5 @@ fn main() {
     })
 }
 ```
+
+for more examples look for the examples folder in the github repo
