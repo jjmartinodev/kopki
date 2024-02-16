@@ -8,6 +8,4 @@ const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4::from_cols_array(&[
     0.0, 0.0, 0.0, 1.0,
 ]);
 
-pub mod model;
-pub mod transform;
 pub mod camera;
