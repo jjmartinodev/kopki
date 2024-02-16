@@ -19,27 +19,22 @@ pollster = "0.3.0"
 wgpu = "0.19.1"
 winit = "0.29.10"
 
-[[test]]
+[[example]]
 name = "triangle"
-path = "tests/triangle/main.rs"
-harness = false
+path = "examples/triangle/main.rs"
 
-[[test]]
+[[example]]
 name = "clear"
-path = "tests/clear/main.rs"
-harness = false
+path = "examples/clear/main.rs"
 
-[[test]]
+[[example]]
 name = "texture"
-path = "tests/texture/main.rs"
-harness = false
+path = "examples/texture/main.rs"
 
-[[test]]
+[[example]]
 name = "uniform"
-path = "tests/uniform/main.rs"
-harness = false
+path = "examples/uniform/main.rs"
 
-[[test]]
+[[example]]
 name = "camera"
-path = "tests/camera/main.rs"
-harness = false
+path = "examples/camera/main.rs"
