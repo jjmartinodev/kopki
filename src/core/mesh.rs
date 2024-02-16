@@ -15,13 +15,13 @@ impl StaticMesh {
         vertices: &[V],
         indices: &[u32]
     ) -> StaticMesh {
-        let vertex_buffer = ctx.device.create_buffer_init(&BufferInitDescriptor {
+        let vertex_buffer = ctx.device().create_buffer_init(&BufferInitDescriptor {
             label: Some("Static Mesh Vertex Buffer"),
             contents: cast_slice(vertices),
             usage: wgpu::BufferUsages::VERTEX
         });
 
-        let index_buffer = ctx.device.create_buffer_init(&BufferInitDescriptor {
+        let index_buffer = ctx.device().create_buffer_init(&BufferInitDescriptor {
             label: Some("Static Mesh Indices Buffer"),
             contents: cast_slice(indices),
             usage: wgpu::BufferUsages::INDEX
@@ -54,13 +54,13 @@ impl DynamicMesh {
         vertices: &[V],
         indices: &[u32]
     ) -> DynamicMesh {
-        let vertex_buffer = ctx.device.create_buffer_init(&BufferInitDescriptor {
+        let vertex_buffer = ctx.device().create_buffer_init(&BufferInitDescriptor {
             label: Some("Dynamic Mesh Vertex Buffer"),
             contents: cast_slice(vertices),
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST
         });
 
-        let index_buffer = ctx.device.create_buffer_init(&BufferInitDescriptor {
+        let index_buffer = ctx.device().create_buffer_init(&BufferInitDescriptor {
             label: Some("Dynamic Mesh Indices Buffer"),
             contents: cast_slice(indices),
             usage: wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST
@@ -77,16 +77,14 @@ impl DynamicMesh {
         ctx: &Context,
         vertices: &[V],
     ) {
-        ctx.queue.write_buffer(&self.vertex_buffer, 0, cast_slice(vertices));
-        todo!("untested, unsafe for now");
+        ctx.queue().write_buffer(&self.vertex_buffer, 0, cast_slice(vertices));
     }
     pub fn uptade_indices(
         &mut self,
         ctx: &Context,
         indices: &[u32]
     ) {
-        ctx.queue.write_buffer(&self.index_buffer, 0, cast_slice(indices));
-        todo!("untested, unsafe for now");
+        ctx.queue().write_buffer(&self.index_buffer, 0, cast_slice(indices));
     }
     pub fn index_count(&self) -> u32 { self.index_count }
     pub fn vertex_buffer_resource(&self) -> RenderResource<'_> {

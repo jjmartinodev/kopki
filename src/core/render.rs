@@ -1,5 +1,5 @@
 
-use std::ops::Range;
+use std::{num::NonZeroU32, ops::Range};
 
 use super::{context::{Context, WindowSurface}, group::GroupLayout};
 
@@ -24,6 +24,8 @@ pub enum RenderResource<'a> {
 }
 
 impl Pipeline {
+    /// creates a generic render Pipeline compatible
+    /// with the given vertex buffer layouts and bind group layouts
     pub fn new(
         shader_source: wgpu::ShaderModuleDescriptor<'_>,
         ctx: &Context,
@@ -31,9 +33,9 @@ impl Pipeline {
         vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>],
         bind_group_layouts: &[&GroupLayout]
     ) -> Pipeline {
-        let shader = ctx.device.create_shader_module(shader_source);
+        let shader = ctx.device().create_shader_module(shader_source);
 
-        let pipeline_layout = ctx.device.create_pipeline_layout(
+        let pipeline_layout = ctx.device().create_pipeline_layout(
             &wgpu::PipelineLayoutDescriptor {
                 label: None,
                 bind_group_layouts: bind_group_layouts.iter().map(|e| return &e.layout)
@@ -42,7 +44,7 @@ impl Pipeline {
             }
         );
 
-        let pipeline = ctx.device.create_render_pipeline(
+        let pipeline = ctx.device().create_render_pipeline(
             &wgpu::RenderPipelineDescriptor {
                 label: Some("Render Pipeline"),
                 layout: Some(&pipeline_layout),
@@ -55,7 +57,7 @@ impl Pipeline {
                     module: &shader,
                     entry_point: "fs_main",
                     targets: &[Some(wgpu::ColorTargetState {
-                        format: surface.configuration.format,
+                        format: surface.configuration().format,
                         blend: Some(wgpu::BlendState::REPLACE),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
@@ -79,6 +81,58 @@ impl Pipeline {
                     alpha_to_coverage_enabled: false,
                 },
                 multiview: None,
+            }
+        );
+
+        Pipeline {
+            pipeline
+        }
+    }
+    /// creates a render pipeline with deeper configuration
+    pub fn new_extra(
+        shader_source: wgpu::ShaderModuleDescriptor<'_>,
+        ctx: &Context,
+        surface: &WindowSurface<'_>,
+        vertex_buffer_layouts: &[wgpu::VertexBufferLayout<'static>],
+        bind_group_layouts: &[&GroupLayout],
+        primitive: wgpu::PrimitiveState,
+        multisample: wgpu::MultisampleState,
+        depth_stencil: Option<wgpu::DepthStencilState>,
+        multiview: Option<NonZeroU32>
+    ) -> Pipeline {
+        let shader = ctx.device().create_shader_module(shader_source);
+
+        let pipeline_layout = ctx.device().create_pipeline_layout(
+            &wgpu::PipelineLayoutDescriptor {
+                label: None,
+                bind_group_layouts: bind_group_layouts.iter().map(|e| return &e.layout)
+                .collect::<Vec<_>>().as_slice(),
+                push_constant_ranges: &[]
+            }
+        );
+
+        let pipeline = ctx.device().create_render_pipeline(
+            &wgpu::RenderPipelineDescriptor {
+                label: Some("Render Pipeline"),
+                layout: Some(&pipeline_layout),
+                vertex: wgpu::VertexState {
+                    module: &shader,
+                    entry_point: "vs_main",
+                    buffers: vertex_buffer_layouts,
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &shader,
+                    entry_point: "fs_main",
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format: surface.configuration().format,
+                        blend: Some(wgpu::BlendState::REPLACE),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                }),
+                primitive,
+                depth_stencil,
+                multisample,
+                multiview,
             }
         );
 

@@ -5,8 +5,8 @@ use winit::dpi::PhysicalSize;
 pub struct Context {
     instance: wgpu::Instance,
     adapter: wgpu::Adapter,
-    pub(crate) device: wgpu::Device,
-    pub(crate) queue: wgpu::Queue,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
 }
 
 /// Represents a surface of a window for rendering.
@@ -17,7 +17,7 @@ pub struct Context {
 pub struct WindowSurface<'a> {
     surface: wgpu::Surface<'a>,
 
-    pub(crate) configuration: wgpu::SurfaceConfiguration,
+    configuration: wgpu::SurfaceConfiguration,
     capabilities: wgpu::SurfaceCapabilities,
     format: wgpu::TextureFormat
 }
@@ -56,7 +56,18 @@ impl Context {
             queue
         }
     }
-    /// create a window surface with a context
+    pub fn device(&self) -> &wgpu::Device {
+        &self.device
+    }
+    pub fn queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+    pub fn instance(&self) -> &wgpu::Instance {
+        &self.instance
+    }
+    pub fn adapter(&self) -> &wgpu::Adapter {
+        &self.adapter
+    }
     pub fn create_surface<'a>(&self, window:&winit::window::Window) -> WindowSurface<'a> {
         let size = window.inner_size();
 
@@ -91,6 +102,7 @@ impl Context {
             format
         }
     }
+    // creates a renders to a surface using a render pass, commands and resources.
     pub fn render<'a>(
         &self,
         surface: &WindowSurface,
@@ -189,12 +201,23 @@ impl Context {
 }
 
 impl<'a> WindowSurface<'a> {
-    /// resize
+    /// resizes the surface of the targetted window
+    ///
+    /// Safety: if the window and it's surface aren't the same size Unkown Behavior is expected
     pub fn resize(&mut self, ctx: &Context, size: PhysicalSize<u32>) {
         if size.width > 0 && size.height > 0 {
             self.configuration.width = size.width;
             self.configuration.height = size.height;
             self.surface.configure(&ctx.device, &self.configuration);
         }
+    }
+    pub fn configuration(&self) -> &wgpu::SurfaceConfiguration {
+        &self.configuration
+    }
+    pub fn capabilities(&self) -> &wgpu::SurfaceCapabilities {
+        &self.capabilities
+    }
+    pub fn format(&self) -> &wgpu::TextureFormat {
+        &self.format
     }
 }

@@ -13,7 +13,7 @@ impl GroupLayout {
         ctx: &Context,
         entries: &[wgpu::BindGroupLayoutEntry]
     ) -> GroupLayout {
-        let layout = ctx.device.create_bind_group_layout(
+        let layout = ctx.device().create_bind_group_layout(
             &wgpu::BindGroupLayoutDescriptor {
                 label: Some("Bind Group Layout"),
                 entries
@@ -40,7 +40,7 @@ impl Group {
             binding += 1;
         }
 
-        let group = ctx.device.create_bind_group(&wgpu::BindGroupDescriptor {
+        let group = ctx.device().create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Bind Group"),
             layout: &layout.layout,
             entries: &entered

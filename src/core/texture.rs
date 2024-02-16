@@ -13,11 +13,11 @@ pub struct Texture2D {
 
 impl Sampler2D {
     pub fn from_descriptor(ctx: &Context, descriptor: &wgpu::SamplerDescriptor) -> Sampler2D {
-        let sampler = ctx.device.create_sampler(descriptor);
+        let sampler = ctx.device().create_sampler(descriptor);
         Sampler2D { sampler }
     }
     pub fn default(ctx: &Context) -> Sampler2D {
-        let sampler = ctx.device.create_sampler(&wgpu::SamplerDescriptor
+        let sampler = ctx.device().create_sampler(&wgpu::SamplerDescriptor
             {
                 label: Some("Sampler 2D"),
                 address_mode_u: wgpu::AddressMode::Repeat,
@@ -49,8 +49,8 @@ impl Texture2D {
         height: u32
     ) -> Texture2D {
         
-        let texture = ctx.device.create_texture_with_data(
-        &ctx.queue, &wgpu::TextureDescriptor {
+        let texture = ctx.device().create_texture_with_data(
+        &ctx.queue(), &wgpu::TextureDescriptor {
             label: None,
             size: wgpu::Extent3d {width, height, depth_or_array_layers: 1},
             mip_level_count: 1,
