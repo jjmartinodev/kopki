@@ -7,7 +7,6 @@ pub struct Sampler2D {
 
 pub struct Texture2D {
     texture: wgpu::Texture,
-    format: wgpu::TextureFormat,
 }
 
 pub struct TextureView2D {
@@ -38,7 +37,7 @@ impl Sampler2D {
     pub fn binding_type() -> wgpu::BindingType {
         wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering)
     }
-    pub fn as_bind_resource(&self) -> wgpu::BindingResource<'_> {
+    pub fn as_binding_resource(&self) -> wgpu::BindingResource<'_> {
         wgpu::BindingResource::Sampler(&self.sampler)
     }
 }
@@ -66,7 +65,6 @@ impl Texture2D {
         
         Texture2D {
             texture,
-            format,
         }
     }
     pub fn create_view(&self) -> TextureView2D {
@@ -85,7 +83,7 @@ impl TextureView2D {
             sample_type: wgpu::TextureSampleType::Float { filterable: true },
         }
     }
-    pub fn as_bind_resource(&self) -> wgpu::BindingResource<'_> {
+    pub fn as_binding_resource(&self) -> wgpu::BindingResource<'_> {
         wgpu::BindingResource::TextureView(&self.view)
     }
 }

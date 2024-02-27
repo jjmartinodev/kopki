@@ -92,8 +92,8 @@ fn main() {
         &[&group_layout]
     );
     let group = Group::new(&ctx, &group_layout, vec![
-        view.as_bind_resource(),
-        sampler.as_bind_resource()
+        view.as_binding_resource(),
+        sampler.as_binding_resource()
     ]);
     let mesh = StaticMesh::new(&ctx, &VERTICES, &INDICES);
     
