@@ -8,7 +8,7 @@ use kopki::{
         mesh::DynamicMesh,
         render::{
             Pipeline,
-            RenderCommand
+            RenderCommand, RenderGroup
         }
     },
     wgpu,
@@ -70,9 +70,8 @@ fn main() {
                 match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
-                        ctx.render(
-                            &surface,
-                            &[
+                        let render_group = RenderGroup {
+                            commands: &[
                                 RenderCommand::SetPipeline { resource_index: 0 },
                                 RenderCommand::SetVertexBuffer
                                 { slot: 0, resource_index: 1 },
@@ -81,11 +80,16 @@ fn main() {
                                 RenderCommand::DrawIndexed
                                 { indices: 0..3, base_vertex: 0, instances: 0..1 } 
                             ],
-                            &[
+                            resources: &[
                                 pipeline.as_resource(),
                                 mesh.vertex_buffer_resource(),
                                 mesh.index_buffer_resource()
-                            ],
+                            ]
+                        };
+                        
+                        ctx.render(
+                            &surface,
+                            &[&render_group],
                             wgpu::Color {
                                 r: 0.0,
                                 g: 0.0,

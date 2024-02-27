@@ -7,6 +7,11 @@ pub struct Pipeline {
     pipeline: wgpu::RenderPipeline
 }
 
+pub struct RenderGroup<'a> {
+    pub commands: &'a [RenderCommand],
+    pub resources: &'a [RenderResource<'a>]
+}
+
 pub enum RenderCommand {
     SetPipeline { resource_index: usize },
     SetBindGroup { index: u32, resource_index: usize },
@@ -38,7 +43,7 @@ impl Pipeline {
         let pipeline_layout = ctx.device().create_pipeline_layout(
             &wgpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: bind_group_layouts.iter().map(|e| return &e.layout)
+                bind_group_layouts: bind_group_layouts.iter().map(|e| &e.layout)
                 .collect::<Vec<_>>().as_slice(),
                 push_constant_ranges: &[]
             }

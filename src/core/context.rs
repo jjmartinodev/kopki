@@ -1,4 +1,4 @@
-use super::render::{RenderCommand, RenderResource};
+use super::render::{RenderCommand, RenderGroup, RenderResource};
 use winit::dpi::PhysicalSize;
 
 /// Represents a graphical context to access the gpu through backends.
@@ -80,8 +80,7 @@ impl Context {
         let capabilities = surface.get_capabilities(&self.adapter);
         let format = capabilities.formats.iter()
             .copied()
-            .filter(|f| f.is_srgb())
-            .next()
+            .find(|f| f.is_srgb())
             .unwrap_or(capabilities.formats[0]);
         let configuration = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
@@ -106,8 +105,7 @@ impl Context {
     pub fn render<'a>(
         &self,
         surface: &WindowSurface,
-        render_commands: &[RenderCommand],
-        render_resources: &[RenderResource],
+        render_groups: &[&RenderGroup],
         color: wgpu::Color
     ) {
         let output = surface.surface.get_current_texture().unwrap();
@@ -137,58 +135,60 @@ impl Context {
                 timestamp_writes: None,
             });
 
-            for command in render_commands {
-                match command {
-                    RenderCommand::SetPipeline { resource_index } => {
-                        match render_resources[*resource_index] {
-                            RenderResource::Pipeline { pipeline } => {
-                                render_pass.set_pipeline(pipeline)
+            for group in render_groups {
+                for command in group.commands {
+                    match command {
+                        RenderCommand::SetPipeline { resource_index } => {
+                            match group.resources[*resource_index] {
+                                RenderResource::Pipeline { pipeline } => {
+                                    render_pass.set_pipeline(pipeline)
+                                }
+                                _ => panic!()
                             }
-                            _ => panic!()
                         }
-                    }
-                    RenderCommand::SetVertexBuffer { slot, resource_index } => {
-                        match render_resources[*resource_index] {
-                            RenderResource::VertexBuffer { slice } => {
-                                render_pass.set_vertex_buffer(*slot, slice)
+                        RenderCommand::SetVertexBuffer { slot, resource_index } => {
+                            match group.resources[*resource_index] {
+                                RenderResource::VertexBuffer { slice } => {
+                                    render_pass.set_vertex_buffer(*slot, slice)
+                                }
+                                _ => panic!()
                             }
-                            _ => panic!()
                         }
-                    }
-                    RenderCommand::SetIndexBuffer {
-                        resource_index,
-                        index_format 
-                    } => {
-                        match render_resources[*resource_index] {
-                            RenderResource::IndexBuffer { slice } => {
-                                render_pass.set_index_buffer(slice, *index_format)
+                        RenderCommand::SetIndexBuffer {
+                            resource_index,
+                            index_format 
+                        } => {
+                            match group.resources[*resource_index] {
+                                RenderResource::IndexBuffer { slice } => {
+                                    render_pass.set_index_buffer(slice, *index_format)
+                                }
+                                _ => panic!()
                             }
-                            _ => panic!()
                         }
-                    }
-                    RenderCommand::DrawIndexed {
-                        indices,
-                        base_vertex,
-                        instances
-                    } => {
-                        render_pass.draw_indexed(indices.clone(),* base_vertex, instances.clone())
-                    }
-                    RenderCommand::Draw {
-                        vertices,
-                        instances
-                    } => {
-                        render_pass.draw(vertices.clone(), instances.clone())
-                    }
-                    RenderCommand::SetBindGroup { index, resource_index } => {
-                        match render_resources[*resource_index] {
-                            RenderResource::BindGroup { group } => {
-                                render_pass.set_bind_group(
-                                    *index,
-                                    group,
-                                    &[]
-                                )
+                        RenderCommand::DrawIndexed {
+                            indices,
+                            base_vertex,
+                            instances
+                        } => {
+                            render_pass.draw_indexed(indices.clone(),* base_vertex, instances.clone())
+                        }
+                        RenderCommand::Draw {
+                            vertices,
+                            instances
+                        } => {
+                            render_pass.draw(vertices.clone(), instances.clone())
+                        }
+                        RenderCommand::SetBindGroup { index, resource_index } => {
+                            match group.resources[*resource_index] {
+                                RenderResource::BindGroup { group } => {
+                                    render_pass.set_bind_group(
+                                        *index,
+                                        group,
+                                        &[]
+                                    )
+                                }
+                                _ => panic!()
                             }
-                            _ => panic!()
                         }
                     }
                 }

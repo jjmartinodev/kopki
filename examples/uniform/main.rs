@@ -12,7 +12,8 @@ use kopki::{
         mesh::StaticMesh,
         render::{
             Pipeline,
-            RenderCommand
+            RenderCommand,
+            RenderGroup
         },
         uniform::UniformBuffer
     },
@@ -72,26 +73,23 @@ fn main() {
         uniform.as_binding_resource()
     ]);
     let mesh = StaticMesh::new(&ctx, &VERTICES, &INDICES);
-
+    let mut t = 0.0f32;
     _ = event_loop.run(move |event,elwt| {
         match event {
             Event::AboutToWait => {
-                window.request_redraw()
+                window.request_redraw();
+                t += 0.01;
             }
             Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
-                        uniform_data[0] += 0.01;
-                        uniform_data[1] += 0.01;
-                        uniform_data[2] += 0.01;
-                        uniform_data[0] = uniform_data[0].fract();
-                        uniform_data[1] = uniform_data[1].fract();
-                        uniform_data[2] = uniform_data[2].fract();
+                        uniform_data[0] = t.cos().abs();
+                        uniform_data[1] = t.cos().abs();
+                        uniform_data[2] = t.sin().abs();
                         uniform.uptade(&ctx, cast_slice(&uniform_data), 0);
-                        ctx.render(
-                            &surface,
-                            &[
+                        let renderer = RenderGroup {
+                            commands: &[
                                 RenderCommand::SetPipeline { resource_index: 0 },
                                 RenderCommand::SetBindGroup
                                 { index: 0, resource_index: 3 },
@@ -102,12 +100,16 @@ fn main() {
                                 RenderCommand::DrawIndexed
                                 { indices: 0..3, base_vertex: 0, instances: 0..1 } 
                             ],
-                            &[
+                            resources: &[
                                 pipeline.as_resource(),
                                 mesh.vertex_buffer_resource(),
                                 mesh.index_buffer_resource(),
                                 group.as_resource()
-                            ],
+                            ]
+                        };
+                        ctx.render(
+                            &surface,
+                            &[&renderer],
                             wgpu::Color {
                                 r: 0.0,
                                 g: 0.0,

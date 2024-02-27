@@ -17,14 +17,14 @@ fn main() {
     _ = event_loop.run(move |event,elwt| {
         match event {
             Event::AboutToWait => {
-
+                window.request_redraw();
             }
             Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
                         ctx.render(
-                            &surface,&[],&[],
+                            &surface,&[],
                             wgpu::Color {
                                 r: 0.0,
                                 g: 0.0,

@@ -8,6 +8,9 @@ pub struct Sampler2D {
 pub struct Texture2D {
     texture: wgpu::Texture,
     format: wgpu::TextureFormat,
+}
+
+pub struct TextureView2D {
     view: wgpu::TextureView
 }
 
@@ -46,29 +49,35 @@ impl Texture2D {
         data: &[u8],
         format: wgpu::TextureFormat,
         width: u32,
-        height: u32
+        height: u32,
+        mip_level: u32,
     ) -> Texture2D {
         
-        let texture = ctx.device().create_texture_with_data(
-        &ctx.queue(), &wgpu::TextureDescriptor {
+        let texture = ctx.device().create_texture_with_data( &ctx.queue(), &wgpu::TextureDescriptor {
             label: None,
             size: wgpu::Extent3d {width, height, depth_or_array_layers: 1},
-            mip_level_count: 1,
+            mip_level_count: mip_level,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format,
             usage: wgpu::TextureUsages::TEXTURE_BINDING,
             view_formats: &[],
         }, TextureDataOrder::LayerMajor, data);
-
-        let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
         
         Texture2D {
             texture,
             format,
+        }
+    }
+    pub fn create_view(&self) -> TextureView2D {
+        let view = self.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        TextureView2D {
             view
         }
     }
+}
+
+impl TextureView2D {
     pub fn binding_type() -> wgpu::BindingType {
         wgpu::BindingType::Texture {
             multisampled: false,

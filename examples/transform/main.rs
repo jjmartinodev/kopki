@@ -3,7 +3,7 @@ use std::mem;
 use bytemuck::{Pod, Zeroable};
 use glam::{Quat, Vec3};
 use kopki::{
-    core::{
+    bytemuck, core::{
         context::Context,
         group::{
             Group,
@@ -12,14 +12,9 @@ use kopki::{
         mesh::StaticMesh,
         render::{
             Pipeline,
-            RenderCommand
+            RenderCommand, RenderGroup
         },
-    },
-    overhaul::transform::Transform,
-    bytemuck,
-    wgpu,
-    winit,
-    glam,
+    }, glam, overhaul::transform::Transform, wgpu, winit
 };
 use winit::{
     event::{Event, WindowEvent},
@@ -92,9 +87,8 @@ fn main() {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
                         transform.uptade(&ctx);
-                        ctx.render(
-                            &surface,
-                            &[
+                        let render_group = RenderGroup {
+                            commands: &[
                                 RenderCommand::SetPipeline { resource_index: 0 },
                                 RenderCommand::SetBindGroup
                                 { index: 0, resource_index: 3 },
@@ -105,12 +99,16 @@ fn main() {
                                 RenderCommand::DrawIndexed
                                 { indices: 0..3, base_vertex: 0, instances: 0..1 } 
                             ],
-                            &[
+                            resources: &[
                                 pipeline.as_resource(),
                                 mesh.vertex_buffer_resource(),
                                 mesh.index_buffer_resource(),
                                 group.as_resource()
-                            ],
+                            ]
+                        };
+                        ctx.render(
+                            &surface,
+                            &[&render_group],
                             wgpu::Color {
                                 r: 0.0,
                                 g: 0.0,

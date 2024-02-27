@@ -10,3 +10,4 @@ const OPENGL_TO_WGPU_MATRIX: Mat4 = Mat4::from_cols_array(&[
 
 pub mod camera;
 pub mod transform;
+pub mod sprite;
