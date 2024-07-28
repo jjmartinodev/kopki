@@ -16,33 +16,9 @@ categories = ["graphics", "rendering"]
 bytemuck = { version = "1.14.3", features = ["derive"] }
 glam = "0.25.0"
 pollster = "0.3.0"
-wgpu = "0.19.1"
+wgpu = "22.0"
 winit = "0.29.10"
-
-[[example]]
-name = "triangle"
-path = "examples/triangle/main.rs"
-
-[[example]]
-name = "dynamic_triangle"
-path = "examples/dynamic_triangle/main.rs"
 
 [[example]]
 name = "clear"
 path = "examples/clear/main.rs"
-
-[[example]]
-name = "texture"
-path = "examples/texture/main.rs"
-
-[[example]]
-name = "uniform"
-path = "examples/uniform/main.rs"
-
-[[example]]
-name = "camera"
-path = "examples/camera/main.rs"
-
-[[example]]
-name = "transform"
-path = "examples/transform/main.rs"
