@@ -10,7 +10,7 @@ struct UnifromGlobals {
     framebuffer_size: [f32; 2]
 }
 
-pub struct Frame {
+pub struct FrameBuffer {
     present_texture: wgpu::Texture,
     present_sampler: wgpu::Sampler,
     global_uniform_buffer: wgpu::Buffer,
@@ -20,8 +20,13 @@ pub struct Frame {
     present_pipeline: wgpu::RenderPipeline,
 }
 
-impl Frame {
-    pub(crate) fn new(app: &mut App) -> Frame {
+pub struct Frame {
+    pub encoder: wgpu::CommandEncoder,
+    pub framebuffer_view: wgpu::TextureView
+}
+
+impl FrameBuffer {
+    pub(crate) fn new(app: &mut App) -> FrameBuffer {
         let context = &app.context;
         let surface = app.render_surface.as_ref().unwrap();
 
@@ -193,7 +198,7 @@ impl Frame {
             cache: None,
         });
 
-        Frame {
+        FrameBuffer {
             present_texture,
             present_sampler,
             global_uniform_buffer,
@@ -245,43 +250,6 @@ impl Frame {
         context.queue.submit(std::iter::once(encoder.finish()));
         output.present();
     }
-    pub fn clear(&mut self, app: &mut App, r: f64, g: f64, b: f64, a: f64) {
-        let context = &app.context;
-
-        let view = self
-            .present_texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
-
-        let mut encoder = context
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("Render Encoder"),
-            });
-
-        {
-            let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("Render Pass"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r,
-                            g,
-                            b,
-                            a
-                        }),
-                        store: wgpu::StoreOp::Store,
-                    },
-                })],
-                depth_stencil_attachment: None,
-                occlusion_query_set: None,
-                timestamp_writes: None,
-            });
-        }
-
-        context.queue.submit(std::iter::once(encoder.finish()));
-    }
     pub fn resize(&mut self, app: &mut App) {
         let context = &app.context;
         let surface = app.render_surface.as_ref().unwrap();
@@ -327,5 +295,47 @@ impl Frame {
         context.queue.write_buffer(&self.global_uniform_buffer, 0, bytemuck::cast_slice(&[UnifromGlobals {
             framebuffer_size: [texture_size.width as f32, texture_size.height as f32]
         }]));
+    }
+    pub fn frame(&self, app: &App) -> Frame {
+        let encoder = app.context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
+
+        let framebuffer_view = self.present_texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+
+        Frame {
+            encoder,
+            framebuffer_view
+        }
+    }
+}
+
+impl Frame {
+    pub fn clear(&mut self, r: f64, g: f64, b: f64, a: f64) {
+        let _render_pass = self.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("Render Pass"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &self.framebuffer_view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color {
+                        r,
+                        g,
+                        b,
+                        a
+                    }),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            depth_stencil_attachment: None,
+            occlusion_query_set: None,
+            timestamp_writes: None,
+        });
+    }
+    pub fn present(self, app: &App) {
+        app.context.queue.submit(std::iter::once(self.encoder.finish()));
     }
 }

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use context::{Context, RenderSurface};
-use graphics::Frame;
+use graphics::{Frame, FrameBuffer};
 use winit::{event::{Event, WindowEvent}, event_loop::EventLoop, window::{Window, WindowBuilder}};
 
 mod context;
@@ -9,7 +9,7 @@ pub mod graphics;
 
 pub trait AppState {
     fn start(app: &mut App) -> Self;
-    fn uptade(&mut self, app: &mut App, frame: &mut Frame);
+    fn uptade(&mut self, app: &mut App, frame: Frame);
 }
 
 pub struct App<'a> {
@@ -20,11 +20,18 @@ pub struct App<'a> {
 }
 
 impl<'a> App<'a> {
+    pub fn wgpu_surface(&self) -> &RenderSurface {
+        &self.render_surface.as_ref()
+            .expect("no surface avalible")
+    }
+    pub fn wgpu_context(&self) -> &Context {
+        &self.context
+    }
     pub fn new() -> App<'a> {
         let event_loop = EventLoop::new().unwrap();
         let window = Arc::new(
             WindowBuilder::new()
-            //.with_resizable(false)
+            .with_resizable(false)
             .build(&event_loop)
             .unwrap()
         );
@@ -39,7 +46,7 @@ impl<'a> App<'a> {
     }
     pub fn run<State: AppState>(mut self) {
         let mut state = State::start(&mut self);
-        let mut frame = Frame::new(&mut self); 
+        let mut framebuffer = FrameBuffer::new(&mut self); 
 
         _ = self.event_loop.take().unwrap().run(move |event, elwt| match event {
             Event::AboutToWait => {
@@ -49,10 +56,12 @@ impl<'a> App<'a> {
                 WindowEvent::CloseRequested => elwt.exit(),
                 WindowEvent::Resized(new_size) => {
                     self.context.resize_surface(new_size, &mut self.render_surface.as_mut().unwrap());
-                    frame.resize(&mut self);
+                    framebuffer.resize(&mut self);
                 }
                 WindowEvent::RedrawRequested => {
-                    state.uptade(&mut self, &mut frame);
+                    let frame = framebuffer.frame(&self);
+                    state.uptade(&mut self, frame);
+                    framebuffer.present(&mut self);
                 }
                 _ => ()
             }

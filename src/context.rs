@@ -10,7 +10,6 @@ pub struct Context {
 }
 
 pub struct RenderSurface<'a> {
-    pub window: Arc<Window>,
     pub surface: wgpu::Surface<'a>,
 
     pub configuration: wgpu::SurfaceConfiguration,
@@ -67,6 +66,8 @@ impl Context {
             surface.surface.configure(&self.device, &surface.configuration);
         }
     }
+    pub fn device(&self) -> &wgpu::Device  { &self.device }
+    pub fn queue(&self) -> &wgpu::Queue  { &self.queue }
 }
 
 impl<'a> RenderSurface<'a> {
@@ -93,12 +94,11 @@ impl<'a> RenderSurface<'a> {
         };
 
         RenderSurface {
-            window: window.clone(),
-
             surface,
             capabilities,
             configuration,
             format
         }
     }
+    pub fn surface(&self) -> &wgpu::Surface { &self.surface }
 }

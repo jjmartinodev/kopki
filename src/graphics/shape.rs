@@ -1,8 +1,7 @@
 use std::f32::consts::PI;
 
 use bytemuck::cast_slice;
-use wgpu::{util::{BufferInitDescriptor, DeviceExt}, PipelineCompilationOptions};
-use winit::window;
+use wgpu::util::{BufferInitDescriptor, DeviceExt};
 
 use crate::App;
 
@@ -35,7 +34,7 @@ pub enum Shape {
         y: f32,
         r: f32,
         color: [u8;4]
-    }
+    },
 }
 
 #[repr(C)]
@@ -183,6 +182,12 @@ impl ShapeRenderer {
     pub fn render(&self, app: &mut App, frame: &mut Frame, shapes: &[&Shape]) {
         let context = &app.context;
 
+        let size = app.window.inner_size();
+
+        context.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[GlobalUniform {
+            framebuffer_size: [size.width as f32, size.height as f32]
+        }]));
+
         let mut buffers = vec![];
 
         for shape in shapes {
@@ -202,21 +207,11 @@ impl ShapeRenderer {
             ));
         }
 
-        let view = frame
-            .present_texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
-
-        let mut encoder = context
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("Render Encoder"),
-            });
-
         {
-            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            let mut render_pass = frame.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
+                    view: &frame.framebuffer_view,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Load,
@@ -236,7 +231,5 @@ impl ShapeRenderer {
                 render_pass.draw_indexed(0..s.2 as u32, 0, 0..1);
             }
         }
-
-        context.queue.submit(std::iter::once(encoder.finish()));
     }
 }
