@@ -3,7 +3,7 @@
 Simple graphics engine, made with winit for windowing & user input, and wgpu-rs for graphics.
 
 # Objectives
-- Manage rendering in multiple levels of abstraction that lets control for more optimization.
+- Manage rendering in high levels of abstraction layers, or use wgpu with the engine's context.
 - Be easy enough to prototype things moderatly fast.
 - Windows and Linux support.
 
@@ -16,9 +16,9 @@ use kopki::{
     graphics::Frame, App, AppState
 };
 
-struct MyState;
+struct State;
 
-impl AppState for MyState {
+impl AppState for State {
     fn start(_app: &mut App) -> Self {
         Self
     }
@@ -30,7 +30,7 @@ impl AppState for MyState {
 
 fn main() {
     let app = App::new();
-    app.run::<MyState>();
+    app.run::<State>();
 }
 ```
 
