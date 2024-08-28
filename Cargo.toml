@@ -7,11 +7,10 @@ rust-version = "1.56"
 authors = ["sugmaboy<jjmartinodev@outlook.com>"]
 readme = "README.md"
 license-file = "LICENSE"
-description = "a simple graphical engine made with   wgpu and winit"
+description = "a simple graphical engine made with wgpu and winit"
 repository = "https://github.com/jjmartinodev/kopki"
-keywords = ["graphics","gfx"]
+keywords = ["graphics", "gfx"]
 categories = ["graphics", "rendering"]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
 [dependencies]
 bytemuck = { version = "1.14.3", features = ["derive"] }
@@ -19,3 +18,7 @@ glam = "0.25.0"
 pollster = "0.3.0"
 wgpu = "22.0"
 winit = "0.29.10"
+
+[dev-dependencies]
+rand = "0.8.5"
+image = "0.24.3"

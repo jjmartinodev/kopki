@@ -1,10 +1,9 @@
 # kopki
 
-Simple graphics engine, made with winit for windowing & user input, and wgpu-rs for graphics.
+Versatile graphics engine, made with winit for windowing, and wgpu-rs for graphics.
 
 # Objectives
-- Manage rendering in high levels of abstraction layers, or use wgpu with the engine's context.
-- Be easy enough to prototype things moderatly fast.
+- Manage rendering in high levels of abstraction layers, or directly use wgpu with the engine's supplied context.
 - Windows and Linux support.
 
 # Non-Objectives
@@ -12,25 +11,12 @@ Simple graphics engine, made with winit for windowing & user input, and wgpu-rs 
 
 # Minimal Example
 ```
-use kopki::{
-    graphics::Frame, App, AppState
-};
-
-struct State;
-
-impl AppState for State {
-    fn start(_app: &mut App) -> Self {
-        Self
-    }
-    fn uptade(&mut self, app: &mut App, mut frame: Frame) {
-        frame.clear(1.0, 0.0, 1.0, 1.0);
-        frame.present(app);
-    }
-}
+use kopki::RenderInstance;
 
 fn main() {
-    let app = App::new();
-    app.run::<State>();
+    let instance = RenderInstance::new();
+    let device = instance.device_from_instance();
+    _ = device;
 }
 ```
 

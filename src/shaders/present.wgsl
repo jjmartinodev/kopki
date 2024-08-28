@@ -12,13 +12,14 @@ var tris_texture: texture_2d<f32>;
 @group(0) @binding(1)
 var tris_sampler: sampler;
 
-struct GlobalsUniform {
+struct Global {
     framebuffer_size: vec2<f32>
 };
+
 @group(1) @binding(0) // 1.
-var<uniform> globals: GlobalsUniform;
+var<uniform> global: Global;
 
 @fragment
 fn fs_main(@builtin(position)position: vec4<f32>) -> @location(0) vec4<f32> {
-    return textureSample(tris_texture, tris_sampler, position.xy / globals.framebuffer_size.xy);
+    return textureSample(tris_texture, tris_sampler, position.xy / global.framebuffer_size.xy);
 }
