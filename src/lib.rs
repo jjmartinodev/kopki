@@ -1,8 +1,5 @@
 pub mod reexports;
 pub mod texture;
-pub mod transform;
-pub mod camera;
-pub mod td_renderer;
 
 use std::sync::Arc;
 
@@ -10,14 +7,6 @@ use pollster::FutureExt;
 use texture::{RenderableTexture, TextureSampler};
 use wgpu::util::{BufferInitDescriptor, DeviceExt};
 use winit::window::Window;
-
-#[rustfmt::skip]
-pub const OPENGL_TO_WGPU_MATRIX: glam::Mat4 = glam::Mat4::from_cols_array(&[
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 0.5, 0.5,
-    0.0, 0.0, 0.0, 1.0,
-]);
 
 pub struct RenderInstance {
     pub instance: wgpu::Instance,
@@ -51,7 +40,7 @@ pub struct FrameBuffer {
 impl RenderInstance {
     pub fn new() -> RenderInstance {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::all(),
+            backends: wgpu::Backends::PRIMARY,
             ..Default::default()
         });
 

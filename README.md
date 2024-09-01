@@ -1,9 +1,8 @@
 # kopki
 
-Versatile graphics engine, made with winit for windowing, and wgpu-rs for graphics.
+Small engine for creating graphical contexts and framebuffers with winit and wgpu.
 
 # Objectives
-- Manage rendering in high levels of abstraction layers, or directly use wgpu with the engine's supplied context.
 - Windows and Linux support.
 
 # Non-Objectives
@@ -20,4 +19,4 @@ fn main() {
 }
 ```
 
-for more examples look for the examples folder in the github repo
+for more examples look for the examples folder in the github repository.
