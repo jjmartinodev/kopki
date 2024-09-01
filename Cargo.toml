@@ -1,6 +1,6 @@
 [package]
 name = "kopki"
-version = "0.3.5"
+version = "0.4.5"
 edition = "2021"
 
 rust-version = "1.56"
